@@ -18,11 +18,11 @@ OriginalPWD="$(pwd -P)"
 cd "$RealExecDir"
 
 [ $# -ne 1 ] && {
-    echo "usage: $0 JAILNAME"
+    echo "usage: $0 JAIL-ROOT"
     exit 1
 }
 JAILNAME="$1"
-JAILDIR="/jail/$JAILNAME"
+JAILDIR="$JAILNAME"
 
 FILES="$(cat mkjail.files)"
 
@@ -48,7 +48,7 @@ for file in $FILES; do
         }
         majmin="$(ls -l "$file" | awk '{print $5, $6}' | tr -d ,)"
         if [ ! -c $JAILDIR$file ]; then
-            mknod $JAILDIR$file c $majmin || {
+            sudo mknod $JAILDIR$file c $majmin || {
                 echo "ERROR: Failed to create device node: $JAILDIR$file"
                 exit 1
             }
@@ -73,5 +73,5 @@ for file in $FILES; do
 done
 
 echo "+ Entering jail $JAILNAME..."
-chroot "$JAILDIR"
+sudo chroot "$JAILDIR"
 # vim:ts=4:sw=4:et:cc=80:
